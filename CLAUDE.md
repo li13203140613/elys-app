@@ -71,6 +71,9 @@ pnpm start    # 生产模式
 
 | Date | Module | Changes | Scope | Note |
 |------|----------|----------|----------|------|
+| 2026-02-15 | Other | Modified: robots.ts | app/robots.ts | AI Auto |
+| 2026-02-15 | Other | Modified: sitemap.ts | app/sitemap.ts | AI Auto |
+| 2026-02-15 | Library | Modified: stripe.ts | lib/payment/stripe.ts | AI Auto |
 | 2026-02-14 | Other | Modified: .env.example | .env.example | AI Auto |
 | 2026-02-14 | Library | Modified: db.ts | lib/db.ts | AI Auto |
 | 2026-02-14 | Other | Modified: tmp-shot.mjs | tmp-shot.mjs | AI Auto |

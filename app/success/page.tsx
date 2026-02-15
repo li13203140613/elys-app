@@ -115,6 +115,14 @@ function SuccessContent() {
               返回首页
             </Button>
           </Link>
+
+          <p className="text-sm text-zinc-500">
+            如无法使用，请联系{' '}
+            <a href="mailto:lixiaofei160@gmail.com" className="text-purple-400 hover:text-purple-300 underline">
+              lixiaofei160@gmail.com
+            </a>
+            {' '}获取帮助
+          </p>
         </div>
       ) : (
         <div className="space-y-6">

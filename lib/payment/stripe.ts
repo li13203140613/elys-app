@@ -19,11 +19,11 @@ export async function createCheckoutSession(
   price: number,
 ): Promise<{ id: string; url: string }> {
   const session = await getStripe().checkout.sessions.create({
-    payment_method_types: ['alipay', 'wechat_pay', 'card'],
+    payment_method_types: ['card', 'alipay', 'wechat_pay'],
     line_items: [
       {
         price_data: {
-          currency: 'cny',
+          currency: 'usd',
           product_data: {
             name: 'Elys 邀请码',
             description: '获取 Elys AI 社交 App 专属邀请码',
@@ -34,7 +34,6 @@ export async function createCheckoutSession(
       },
     ],
     mode: 'payment',
-    locale: 'zh',
     payment_method_options: {
       wechat_pay: {
         client: 'web',
