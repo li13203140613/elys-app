@@ -49,7 +49,7 @@ export function CodeCard({ id, maskedCode, price, index }: CodeCardProps) {
         {/* 价格和购买按钮 */}
         <div className="flex items-center justify-between mt-4">
           <div className="flex items-baseline gap-1">
-            <span className="text-2xl font-bold text-white">¥{price}</span>
+            <span className="text-2xl font-bold text-white">≈¥{Math.round(price * 7.3)}</span>
             <span className="text-xs text-zinc-500">/个</span>
           </div>
 

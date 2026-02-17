@@ -31,7 +31,7 @@ function JsonLd() {
     '@type': 'WebSite',
     name: 'Elys 邀请码',
     url: 'https://www.elys-app.com',
-    description: '官方渠道购买 Elys 邀请码，$9.9 即可获取 Elys App 专属邀请码。',
+    description: '官方渠道购买 Elys 邀请码，¥72 即可获取 Elys App 专属邀请码。',
   }
 
   const faqData = {
@@ -51,7 +51,7 @@ function JsonLd() {
         name: 'Elys 邀请码多少钱？',
         acceptedAnswer: {
           '@type': 'Answer',
-          text: 'Elys 邀请码售价 $9.9/个，支持信用卡、支付宝、微信支付，付款后立即显示完整邀请码。',
+          text: 'Elys 邀请码售价约 ¥72/个（$9.9 USD），支持信用卡、支付宝、微信支付，付款后立即显示完整邀请码。',
         },
       },
       {
@@ -100,7 +100,7 @@ export default function HomePage() {
             </h1>
 
             <p className="mt-4 text-lg text-zinc-400 max-w-xl mx-auto">
-              Elys — 新一代 AI 社交应用，¥9.9 获取 Elys 邀请码，即刻加入
+              Elys — 新一代 AI 社交应用，≈¥72 获取 Elys 邀请码，即刻加入
             </p>
 
             <p className="mt-3 text-sm text-zinc-500 max-w-md mx-auto">
