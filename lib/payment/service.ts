@@ -1,7 +1,13 @@
 import { getDb } from '@/lib/db'
+import { AppCurrency, AppLanguage } from '@/lib/i18n'
 import { createCheckoutSession } from './stripe'
 
 const RESERVE_TIMEOUT_MINUTES = 5
+
+interface PaymentPreferences {
+  currency: AppCurrency
+  language: AppLanguage
+}
 
 /**
  * Release codes that were reserved but not paid within timeout.
@@ -31,10 +37,9 @@ export async function releaseExpiredReservations() {
 /**
  * Create payment session: reserve code + create Stripe session + create order.
  */
-export async function createPaymentSession(codeId: string) {
+export async function createPaymentSession(codeId: string, preferences: PaymentPreferences) {
   const sql = getDb()
 
-  // Cleanup timed-out reservations first.
   await releaseExpiredReservations()
 
   const codes = await sql`
@@ -45,12 +50,16 @@ export async function createPaymentSession(codeId: string) {
   `
 
   if (codes.length === 0) {
-    throw new Error('邀请码不存在或已被购买')
+    throw new Error('Invitation code is not available')
   }
 
   const code = codes[0]
-
-  const { id: sessionId, url } = await createCheckoutSession(codeId, code.price)
+  const { id: sessionId, url } = await createCheckoutSession({
+    codeId,
+    usdPrice: Number(code.price),
+    currency: preferences.currency,
+    language: preferences.language,
+  })
 
   await sql`
     UPDATE invitation_codes
@@ -91,7 +100,6 @@ export async function completePayment(sessionId: string, buyerEmail?: string) {
     return
   }
 
-  // Ignore stale callbacks for expired/canceled orders.
   if (order.status !== 'pending') {
     return
   }
@@ -122,7 +130,6 @@ export async function completePayment(sessionId: string, buyerEmail?: string) {
 export async function getOrderBySessionId(sessionId: string) {
   const sql = getDb()
 
-  // Keep status fresh while polling.
   await releaseExpiredReservations()
 
   const orders = await sql`

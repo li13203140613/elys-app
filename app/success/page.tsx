@@ -1,19 +1,23 @@
 'use client'
 
+import Link from 'next/link'
 import { Suspense, useEffect, useState } from 'react'
 import { useSearchParams } from 'next/navigation'
+import { CheckCircle, Copy, Loader2, XCircle } from 'lucide-react'
+import { toast } from 'sonner'
 import { Header } from '@/components/Header'
 import { Footer } from '@/components/Footer'
 import { Button } from '@/components/ui/button'
-import { CheckCircle, Copy, Loader2, XCircle } from 'lucide-react'
-import { toast } from 'sonner'
-import Link from 'next/link'
+import { useAppSettings } from '@/components/AppSettingsProvider'
+
+type PaymentStatus = 'loading' | 'pending' | 'completed' | 'expired' | 'failed'
 
 function SuccessContent() {
   const searchParams = useSearchParams()
   const sessionId = searchParams.get('session_id')
+  const { t } = useAppSettings()
 
-  const [status, setStatus] = useState<'loading' | 'completed' | 'pending' | 'failed'>('loading')
+  const [status, setStatus] = useState<PaymentStatus>('loading')
   const [code, setCode] = useState<string | null>(null)
   const [pollCount, setPollCount] = useState(0)
 
@@ -31,12 +35,20 @@ function SuccessContent() {
         if (data.status === 'completed' && data.code) {
           setStatus('completed')
           setCode(data.code)
-        } else if (data.status === 'pending') {
-          setStatus('pending')
-          setPollCount(prev => prev + 1)
-        } else {
-          setStatus('failed')
+          return
         }
+
+        if (data.status === 'pending') {
+          setStatus('pending')
+          return
+        }
+
+        if (data.status === 'expired') {
+          setStatus('expired')
+          return
+        }
+
+        setStatus('failed')
       } catch {
         setStatus('failed')
       }
@@ -45,40 +57,49 @@ function SuccessContent() {
     checkOrder()
   }, [sessionId, pollCount])
 
-  // 轮询：pending 状态每 2 秒检查一次，最多 30 次
   useEffect(() => {
-    if (status !== 'pending' || pollCount >= 30) return
+    if (status !== 'pending') {
+      return
+    }
 
-    const timer = setTimeout(() => {
-      setPollCount(prev => prev + 1)
+    if (pollCount >= 30) {
+      setStatus('failed')
+      return
+    }
+
+    const timer = window.setTimeout(() => {
+      setPollCount((prev) => prev + 1)
     }, 2000)
 
-    return () => clearTimeout(timer)
+    return () => window.clearTimeout(timer)
   }, [status, pollCount])
 
   function copyCode() {
-    if (code) {
-      navigator.clipboard.writeText(code)
-      toast.success('邀请码已复制到剪贴板')
+    if (!code) {
+      return
     }
+    navigator.clipboard.writeText(code)
+    toast.success(t.copySuccess)
   }
 
   return (
     <div className="max-w-md w-full text-center">
-      {status === 'loading' || status === 'pending' ? (
+      {(status === 'loading' || status === 'pending') && (
         <div className="space-y-6">
           <Loader2 className="size-16 text-purple-400 animate-spin mx-auto" />
           <div>
-            <h1 className="text-2xl font-bold text-white">正在确认支付...</h1>
-            <p className="text-zinc-400 mt-2">请稍候，我们正在验证您的支付状态</p>
+            <h1 className="text-2xl font-bold text-white">{t.successCheckingTitle}</h1>
+            <p className="text-zinc-400 mt-2">{t.successCheckingDesc}</p>
           </div>
         </div>
-      ) : status === 'completed' && code ? (
+      )}
+
+      {status === 'completed' && code && (
         <div className="space-y-8">
           <div className="space-y-4">
             <CheckCircle className="size-16 text-emerald-400 mx-auto" />
-            <h1 className="text-2xl font-bold text-white">Elys 邀请码购买成功!</h1>
-            <p className="text-zinc-400">您的 Elys 邀请码如下，请妥善保存</p>
+            <h1 className="text-2xl font-bold text-white">{t.successTitle}</h1>
+            <p className="text-zinc-400">{t.successDesc}</p>
           </div>
 
           <div className="relative rounded-2xl border border-emerald-500/30 bg-emerald-500/5 p-8">
@@ -88,9 +109,7 @@ function SuccessContent() {
                   key={i}
                   className="w-12 h-16 rounded-lg bg-zinc-800 border border-zinc-700 flex items-center justify-center"
                 >
-                  <span className="text-3xl font-mono font-bold text-emerald-400">
-                    {char}
-                  </span>
+                  <span className="text-3xl font-mono font-bold text-emerald-400">{char}</span>
                 </div>
               ))}
             </div>
@@ -101,41 +120,56 @@ function SuccessContent() {
               className="mt-6 w-full border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/10"
             >
               <Copy className="size-4" />
-              复制邀请码
+              {t.copyCode}
             </Button>
           </div>
 
           <div className="space-y-2 text-sm text-zinc-500">
-            <p>请妥善保管您的 Elys 邀请码</p>
-            <p>在 Elys App 注册页面输入此邀请码即可激活</p>
+            <p>{t.keepSafe}</p>
+            <p>{t.useHint}</p>
           </div>
 
           <Link href="/">
             <Button variant="ghost" className="text-zinc-400 hover:text-white">
-              返回首页
+              {t.backHome}
             </Button>
           </Link>
 
           <p className="text-sm text-zinc-500">
-            如无法使用，请联系{' '}
+            {t.supportPrefix}{' '}
             <a href="mailto:lixiaofei160@gmail.com" className="text-purple-400 hover:text-purple-300 underline">
               lixiaofei160@gmail.com
-            </a>
-            {' '}获取帮助
+            </a>{' '}
+            {t.supportSuffix}
           </p>
         </div>
-      ) : (
+      )}
+
+      {status === 'expired' && (
         <div className="space-y-6">
-          <XCircle className="size-16 text-red-400 mx-auto" />
+          <XCircle className="size-16 text-amber-400 mx-auto" />
           <div>
-            <h1 className="text-2xl font-bold text-white">支付未完成</h1>
-            <p className="text-zinc-400 mt-2">
-              {!sessionId ? '无效的访问链接' : '支付验证超时，请联系客服'}
-            </p>
+            <h1 className="text-2xl font-bold text-white">{t.expiredTitle}</h1>
+            <p className="text-zinc-400 mt-2">{t.expiredDesc}</p>
           </div>
           <Link href="/">
             <Button className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 text-white">
-              返回首页
+              {t.backHome}
+            </Button>
+          </Link>
+        </div>
+      )}
+
+      {status === 'failed' && (
+        <div className="space-y-6">
+          <XCircle className="size-16 text-red-400 mx-auto" />
+          <div>
+            <h1 className="text-2xl font-bold text-white">{t.failedTitle}</h1>
+            <p className="text-zinc-400 mt-2">{!sessionId ? t.invalidLink : t.timeoutDesc}</p>
+          </div>
+          <Link href="/">
+            <Button className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 text-white">
+              {t.backHome}
             </Button>
           </Link>
         </div>
@@ -153,7 +187,6 @@ export default function SuccessPage() {
           fallback={
             <div className="text-center">
               <Loader2 className="size-16 text-purple-400 animate-spin mx-auto" />
-              <p className="text-zinc-400 mt-4">加载中...</p>
             </div>
           }
         >

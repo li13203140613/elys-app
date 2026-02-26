@@ -1,30 +1,40 @@
 import type { Metadata } from 'next'
+import { AppSettingsProvider } from '@/components/AppSettingsProvider'
 import { Toaster } from '@/components/ui/sonner'
 import './globals.css'
 
 export const metadata: Metadata = {
   title: {
-    default: 'Elys 邀请码 - 购买 Elys 官方邀请码 | 限量 ¥72',
-    template: '%s | Elys 邀请码',
+    default: 'elys邀请码 - Elys 邀请码购买',
+    template: '%s | elys邀请码',
   },
-  description: '官方渠道购买 Elys 邀请码，¥72 即可获取 Elys App 专属邀请码。Elys 是新一代 AI 社交应用，支持支付宝、微信支付、信用卡，即买即用。',
-  keywords: ['elys', 'elys邀请码', 'elys 邀请码', 'elys app', 'elys注册', 'elys邀请码购买', 'elys invitation code', 'elys ai'],
+  description:
+    'elys邀请码官方购买渠道，支持人民币、日元、港币、美元支付，付款后即时获取 Elys 邀请码。',
+  keywords: [
+    'elys邀请码',
+    'elys 邀请码',
+    'elys',
+    'elys invitation code',
+    'elys app',
+    'elys register',
+    'elys ai',
+  ],
   metadataBase: new URL('https://www.elys-app.com'),
   alternates: {
     canonical: '/',
   },
   openGraph: {
-    title: 'Elys 邀请码 - 购买 Elys 官方邀请码',
-    description: '官方渠道购买 Elys 邀请码，¥72 即可获取 Elys App 专属邀请码。新一代 AI 社交应用，即买即用。',
+    title: 'elys邀请码 - Elys 邀请码购买',
+    description: 'elys邀请码官方购买渠道，付款后即时获取邀请码。',
     url: 'https://www.elys-app.com',
-    siteName: 'Elys 邀请码',
+    siteName: 'elys邀请码',
     locale: 'zh_CN',
     type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Elys 邀请码 - 购买 Elys 官方邀请码',
-    description: '官方渠道购买 Elys 邀请码，¥72 即可获取 Elys App 专属邀请码。',
+    title: 'elys邀请码 - Elys 邀请码购买',
+    description: 'elys邀请码官方购买渠道，付款后即时获取邀请码。',
   },
   robots: {
     index: true,
@@ -34,14 +44,14 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: {
-  children: React.ReactNode
-}) {
+}: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="zh-CN">
       <body className="min-h-screen bg-[#0a0a0f] antialiased">
-        {children}
-        <Toaster />
+        <AppSettingsProvider>
+          {children}
+          <Toaster />
+        </AppSettingsProvider>
       </body>
     </html>
   )

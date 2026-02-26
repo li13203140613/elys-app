@@ -1,4 +1,11 @@
 import Stripe from 'stripe'
+import {
+  AppCurrency,
+  AppLanguage,
+  convertUsdToCurrency,
+  getStripeLocale,
+  toMinorUnits,
+} from '@/lib/i18n'
 
 let _stripe: Stripe | null = null
 
@@ -11,38 +18,59 @@ function getStripe(): Stripe {
   return _stripe
 }
 
+interface CreateCheckoutSessionInput {
+  codeId: string
+  usdPrice: number
+  currency: AppCurrency
+  language: AppLanguage
+}
+
+function getPaymentMethodTypes(currency: AppCurrency): Stripe.Checkout.SessionCreateParams.PaymentMethodType[] {
+  if (currency === 'cny') {
+    return ['card', 'alipay', 'wechat_pay']
+  }
+  return ['card']
+}
+
 /**
- * 创建邀请码购买的 Stripe Checkout Session
+ * Create Stripe Checkout Session for invitation code purchase.
  */
 export async function createCheckoutSession(
-  codeId: string,
-  price: number,
+  input: CreateCheckoutSessionInput
 ): Promise<{ id: string; url: string }> {
+  const priceInCurrency = convertUsdToCurrency(input.usdPrice, input.currency)
+  const unitAmount = toMinorUnits(priceInCurrency, input.currency)
+
   const session = await getStripe().checkout.sessions.create({
-    payment_method_types: ['card', 'alipay', 'wechat_pay'],
+    payment_method_types: getPaymentMethodTypes(input.currency),
     line_items: [
       {
         price_data: {
-          currency: 'usd',
+          currency: input.currency,
           product_data: {
-            name: 'Elys 邀请码',
-            description: '获取 Elys AI 社交 App 专属邀请码',
+            name: 'Elys Invitation Code',
+            description: 'Official invitation code for Elys app signup',
           },
-          unit_amount: Math.round(price * 100),
+          unit_amount: unitAmount,
         },
         quantity: 1,
       },
     ],
     mode: 'payment',
-    payment_method_options: {
-      wechat_pay: {
-        client: 'web',
-      },
-    },
+    payment_method_options: input.currency === 'cny'
+      ? {
+          wechat_pay: {
+            client: 'web',
+          },
+        }
+      : undefined,
+    locale: getStripeLocale(input.language),
     success_url: `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/success?session_id={CHECKOUT_SESSION_ID}`,
     cancel_url: `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/`,
     metadata: {
-      code_id: codeId,
+      code_id: input.codeId,
+      currency: input.currency,
+      language: input.language,
     },
   })
 
@@ -53,19 +81,16 @@ export async function createCheckoutSession(
 }
 
 /**
- * 获取 Checkout Session 详情
+ * Get checkout session details.
  */
 export async function getCheckoutSession(sessionId: string) {
   return await getStripe().checkout.sessions.retrieve(sessionId)
 }
 
 /**
- * 验证 Webhook 签名
+ * Verify webhook signature.
  */
-export function constructWebhookEvent(
-  payload: string | Buffer,
-  signature: string
-): Stripe.Event {
+export function constructWebhookEvent(payload: string | Buffer, signature: string): Stripe.Event {
   return getStripe().webhooks.constructEvent(
     payload,
     signature,

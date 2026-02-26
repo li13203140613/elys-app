@@ -1,9 +1,10 @@
 'use client'
 
 import { useState } from 'react'
-import { Button } from '@/components/ui/button'
 import { Loader2, ShoppingCart } from 'lucide-react'
 import { toast } from 'sonner'
+import { Button } from '@/components/ui/button'
+import { useAppSettings } from './AppSettingsProvider'
 
 interface PaymentButtonProps {
   codeId: string
@@ -13,6 +14,7 @@ interface PaymentButtonProps {
 
 export function PaymentButton({ codeId, disabled, onLoadingChange }: PaymentButtonProps) {
   const [loading, setLoading] = useState(false)
+  const { currency, language, t } = useAppSettings()
 
   async function handlePurchase() {
     setLoading(true)
@@ -22,19 +24,17 @@ export function PaymentButton({ codeId, disabled, onLoadingChange }: PaymentButt
       const res = await fetch('/api/payment/create-session', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ codeId }),
+        body: JSON.stringify({ codeId, currency, language }),
       })
 
       const data = await res.json()
-
       if (!res.ok) {
-        throw new Error(data.error || '创建支付失败')
+        throw new Error(data.error || t.createSessionError)
       }
 
-      // 跳转到 Stripe 支付页面
       window.location.href = data.url
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : '支付失败，请重试')
+      toast.error(err instanceof Error ? err.message : t.purchaseError)
       setLoading(false)
       onLoadingChange?.(false)
     }
@@ -49,12 +49,12 @@ export function PaymentButton({ codeId, disabled, onLoadingChange }: PaymentButt
       {loading ? (
         <>
           <Loader2 className="size-4 animate-spin" />
-          处理中...
+          {t.processing}
         </>
       ) : (
         <>
           <ShoppingCart className="size-4" />
-          立即购买
+          {t.buyNow}
         </>
       )}
     </Button>

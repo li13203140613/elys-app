@@ -1,8 +1,9 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { CodeCard } from './CodeCard'
 import { Loader2 } from 'lucide-react'
+import { CodeCard } from './CodeCard'
+import { useAppSettings } from './AppSettingsProvider'
 
 interface CodeItem {
   id: string
@@ -14,23 +15,26 @@ export function CodeGrid() {
   const [codes, setCodes] = useState<CodeItem[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const { t } = useAppSettings()
 
   useEffect(() => {
     async function fetchCodes() {
       try {
         const res = await fetch('/api/codes')
-        if (!res.ok) throw new Error('获取邀请码失败')
+        if (!res.ok) {
+          throw new Error(t.fetchFailed)
+        }
         const data = await res.json()
         setCodes(data.codes)
       } catch (err) {
-        setError(err instanceof Error ? err.message : '加载失败')
+        setError(err instanceof Error ? err.message : t.fetchFailed)
       } finally {
         setLoading(false)
       }
     }
 
     fetchCodes()
-  }, [])
+  }, [t.fetchFailed])
 
   if (loading) {
     return (
@@ -51,8 +55,8 @@ export function CodeGrid() {
   if (codes.length === 0) {
     return (
       <div className="text-center py-20">
-        <p className="text-zinc-400 text-lg">暂无可用 Elys 邀请码</p>
-        <p className="text-zinc-500 text-sm mt-2">Elys 邀请码不定期上架，请稍后再来</p>
+        <p className="text-zinc-400 text-lg">{t.noCodesTitle}</p>
+        <p className="text-zinc-500 text-sm mt-2">{t.noCodesHint}</p>
       </div>
     )
   }
