@@ -1,18 +1,21 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getDb } from '@/lib/db'
+import { releaseExpiredReservations } from '@/lib/payment/service'
 
 function verifyAdmin(request: NextRequest): boolean {
   const password = request.headers.get('x-admin-password')
   return password === process.env.ADMIN_PASSWORD
 }
 
-// 获取所有邀请码（管理员）
+// Get all invitation codes (admin)
 export async function GET(request: NextRequest) {
   if (!verifyAdmin(request)) {
     return NextResponse.json({ error: '未授权' }, { status: 401 })
   }
 
   try {
+    await releaseExpiredReservations()
+
     const sql = getDb()
 
     const codes = await sql`
@@ -20,7 +23,6 @@ export async function GET(request: NextRequest) {
       ORDER BY created_at DESC
     `
 
-    // 计算统计
     const stats = {
       total: codes.length,
       available: codes.filter(c => c.status === 'available').length,
@@ -37,7 +39,7 @@ export async function GET(request: NextRequest) {
   }
 }
 
-// 添加邀请码（管理员）
+// Add codes (admin)
 export async function POST(request: NextRequest) {
   if (!verifyAdmin(request)) {
     return NextResponse.json({ error: '未授权' }, { status: 401 })
@@ -50,7 +52,6 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: '请提供邀请码数组' }, { status: 400 })
     }
 
-    // 验证格式
     const validCodes = codes.filter(
       (c: string) => typeof c === 'string' && /^[A-Z0-9]{6}$/.test(c)
     )
@@ -61,7 +62,6 @@ export async function POST(request: NextRequest) {
 
     const sql = getDb()
 
-    // 逐个插入，跳过已存在的
     let added = 0
     for (const code of validCodes) {
       try {
@@ -72,7 +72,7 @@ export async function POST(request: NextRequest) {
         `
         added++
       } catch {
-        // 跳过冲突
+        // Skip conflict rows.
       }
     }
 

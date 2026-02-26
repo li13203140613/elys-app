@@ -1,32 +1,42 @@
 import { getDb } from '@/lib/db'
 import { createCheckoutSession } from './stripe'
 
-const RESERVE_TIMEOUT_MINUTES = 15
+const RESERVE_TIMEOUT_MINUTES = 5
 
 /**
- * 释放超时的预留邀请码
+ * Release codes that were reserved but not paid within timeout.
  */
-async function releaseExpiredReservations() {
+export async function releaseExpiredReservations() {
   const sql = getDb()
   const cutoff = new Date(Date.now() - RESERVE_TIMEOUT_MINUTES * 60 * 1000).toISOString()
 
   await sql`
-    UPDATE invitation_codes
-    SET status = 'available', stripe_session_id = NULL, reserved_at = NULL
-    WHERE status = 'reserved' AND reserved_at < ${cutoff}
+    WITH expired_codes AS (
+      UPDATE invitation_codes
+      SET status = 'available', stripe_session_id = NULL, reserved_at = NULL
+      WHERE status = 'reserved' AND reserved_at < ${cutoff}
+      RETURNING stripe_session_id
+    )
+    UPDATE orders
+    SET status = 'expired'
+    WHERE status = 'pending'
+      AND stripe_session_id IN (
+        SELECT stripe_session_id
+        FROM expired_codes
+        WHERE stripe_session_id IS NOT NULL
+      )
   `
 }
 
 /**
- * 创建支付会话：锁定邀请码 + 创建 Stripe 会话 + 创建订单
+ * Create payment session: reserve code + create Stripe session + create order.
  */
 export async function createPaymentSession(codeId: string) {
   const sql = getDb()
 
-  // 先释放超时的预留
+  // Cleanup timed-out reservations first.
   await releaseExpiredReservations()
 
-  // 检查邀请码状态并锁定（原子操作）
   const codes = await sql`
     UPDATE invitation_codes
     SET status = 'reserved', reserved_at = NOW()
@@ -40,17 +50,14 @@ export async function createPaymentSession(codeId: string) {
 
   const code = codes[0]
 
-  // 创建 Stripe Checkout Session
   const { id: sessionId, url } = await createCheckoutSession(codeId, code.price)
 
-  // 更新邀请码的 stripe_session_id
   await sql`
     UPDATE invitation_codes
     SET stripe_session_id = ${sessionId}
     WHERE id = ${codeId}
   `
 
-  // 创建订单记录
   await sql`
     INSERT INTO orders (code_id, stripe_session_id, amount, status)
     VALUES (${codeId}, ${sessionId}, ${code.price}, 'pending')
@@ -60,12 +67,11 @@ export async function createPaymentSession(codeId: string) {
 }
 
 /**
- * 完成支付：标记邀请码已售 + 更新订单状态
+ * Complete payment: mark code sold and order completed.
  */
 export async function completePayment(sessionId: string, buyerEmail?: string) {
   const sql = getDb()
 
-  // 查找订单
   const orders = await sql`
     SELECT o.*, ic.code as invitation_code
     FROM orders o
@@ -81,31 +87,43 @@ export async function completePayment(sessionId: string, buyerEmail?: string) {
 
   const order = orders[0]
 
-  // 幂等检查
   if (order.status === 'completed') {
     return
   }
 
-  // 更新订单状态
+  // Ignore stale callbacks for expired/canceled orders.
+  if (order.status !== 'pending') {
+    return
+  }
+
+  const soldCodes = await sql`
+    UPDATE invitation_codes
+    SET status = 'sold', buyer_email = ${buyerEmail ?? null}, sold_at = NOW()
+    WHERE id = ${order.code_id}
+      AND status = 'reserved'
+      AND stripe_session_id = ${sessionId}
+    RETURNING id
+  `
+
+  if (soldCodes.length === 0) {
+    return
+  }
+
   await sql`
     UPDATE orders
     SET status = 'completed', buyer_email = ${buyerEmail ?? null}, completed_at = NOW()
     WHERE stripe_session_id = ${sessionId}
   `
-
-  // 标记邀请码已售
-  await sql`
-    UPDATE invitation_codes
-    SET status = 'sold', buyer_email = ${buyerEmail ?? null}, sold_at = NOW()
-    WHERE id = ${order.code_id}
-  `
 }
 
 /**
- * 查询订单状态
+ * Query order status.
  */
 export async function getOrderBySessionId(sessionId: string) {
   const sql = getDb()
+
+  // Keep status fresh while polling.
+  await releaseExpiredReservations()
 
   const orders = await sql`
     SELECT o.status, o.buyer_email, ic.code

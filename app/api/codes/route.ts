@@ -1,8 +1,11 @@
 import { NextResponse } from 'next/server'
 import { getDb } from '@/lib/db'
+import { releaseExpiredReservations } from '@/lib/payment/service'
 
 export async function GET() {
   try {
+    await releaseExpiredReservations()
+
     const sql = getDb()
 
     const codes = await sql`
