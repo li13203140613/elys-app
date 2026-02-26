@@ -27,26 +27,44 @@ interface AppSettingsContextValue {
 
 const AppSettingsContext = createContext<AppSettingsContextValue | undefined>(undefined)
 
-export function AppSettingsProvider({ children }: { children: React.ReactNode }) {
-  const [language, setLanguageState] = useState<AppLanguage>('zh-CN')
-  const [currency, setCurrencyState] = useState<AppCurrency>('cny')
+interface AppSettingsProviderProps {
+  children: React.ReactNode
+  initialLanguage?: AppLanguage
+  initialCurrency?: AppCurrency
+  forceInitialLocale?: boolean
+}
+
+export function AppSettingsProvider({
+  children,
+  initialLanguage = 'zh-CN',
+  initialCurrency = 'cny',
+  forceInitialLocale = false,
+}: AppSettingsProviderProps) {
+  const [language, setLanguageState] = useState<AppLanguage>(initialLanguage)
+  const [currency, setCurrencyState] = useState<AppCurrency>(initialCurrency)
 
   useEffect(() => {
+    if (forceInitialLocale) {
+      setLanguageState(initialLanguage)
+      setCurrencyState(initialCurrency)
+      return
+    }
+
     const storedLanguage = typeof window !== 'undefined'
       ? window.localStorage.getItem(STORAGE_LANGUAGE_KEY)
       : null
-    const initialLanguage = normalizeLanguage(storedLanguage || navigator.language)
+    const detectedLanguage = normalizeLanguage(storedLanguage || navigator.language)
 
     const storedCurrency = typeof window !== 'undefined'
       ? window.localStorage.getItem(STORAGE_CURRENCY_KEY)
       : null
-    const initialCurrency = storedCurrency
+    const detectedCurrency = storedCurrency
       ? normalizeCurrency(storedCurrency)
-      : getDefaultCurrencyByLanguage(initialLanguage)
+      : getDefaultCurrencyByLanguage(detectedLanguage)
 
-    setLanguageState(initialLanguage)
-    setCurrencyState(initialCurrency)
-  }, [])
+    setLanguageState(detectedLanguage)
+    setCurrencyState(detectedCurrency)
+  }, [forceInitialLocale, initialCurrency, initialLanguage])
 
   useEffect(() => {
     document.documentElement.lang = language

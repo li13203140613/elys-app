@@ -22,6 +22,11 @@ export const metadata: Metadata = {
   metadataBase: new URL('https://www.elys-app.com'),
   alternates: {
     canonical: '/',
+    languages: {
+      'zh-CN': '/',
+      'en-US': '/en',
+      'x-default': '/',
+    },
   },
   openGraph: {
     title: 'elys邀请码 - Elys 邀请码购买',

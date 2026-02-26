@@ -7,11 +7,17 @@ import { CodeGrid } from '@/components/CodeGrid'
 import { useAppSettings } from '@/components/AppSettingsProvider'
 
 function JsonLd() {
+  const { language } = useAppSettings()
+  const isEnglish = language === 'en'
+
   const structuredData = {
     '@context': 'https://schema.org',
     '@type': 'Product',
-    name: 'elys邀请码',
-    description: 'elys邀请码官方购买页面，付款后即时获取 Elys 邀请码。',
+    name: isEnglish ? 'Elys Invitation Code' : 'elys邀请码',
+    alternateName: isEnglish ? 'elys邀请码' : 'Elys Invitation Code',
+    description: isEnglish
+      ? 'Official Elys invitation code checkout page with instant delivery.'
+      : 'elys邀请码官方购买页面，付款后即时获取 Elys 邀请码。',
     brand: {
       '@type': 'Brand',
       name: 'Elys',
@@ -27,6 +33,7 @@ function JsonLd() {
         name: 'Elys',
       },
     },
+    inLanguage: isEnglish ? 'en' : 'zh-CN',
   }
 
   return (
