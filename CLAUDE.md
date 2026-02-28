@@ -71,6 +71,15 @@ pnpm start    # 生产模式
 
 | Date | Module | Changes | Scope | Note |
 |------|----------|----------|----------|------|
+| 2026-02-28 | Docs | Modified: CLAUDE.md | CLAUDE.md | AI Auto |
+| 2026-02-28 | SEO Pages | Created: 7 SEO pages + 6 shared components | app/elys-ai, app/elys-app, app/download, app/elys-invitation-code, app/register, app/elys-social, app/elys-invite-code, components/seo/ | AI Auto |
+| 2026-02-28 | Components | Modified: Header.tsx, Footer.tsx | components/Header.tsx, components/Footer.tsx | AI Auto - Added nav links and footer internal links |
+| 2026-02-28 | Other | Modified: sitemap.ts | app/sitemap.ts | AI Auto - Added 7 new SEO URLs |
+| 2026-02-28 | Components | Modified: SeoCta.tsx | components/seo/SeoCta.tsx | AI Auto |
+| 2026-02-28 | Components | Modified: SeoFaq.tsx | components/seo/SeoFaq.tsx | AI Auto |
+| 2026-02-28 | Components | Modified: SeoSection.tsx | components/seo/SeoSection.tsx | AI Auto |
+| 2026-02-28 | Components | Modified: SeoHero.tsx | components/seo/SeoHero.tsx | AI Auto |
+| 2026-02-28 | Components | Modified: SeoPageLayout.tsx | components/seo/SeoPageLayout.tsx | AI Auto |
 | 2026-02-28 | Library | Modified: i18n.ts | lib/i18n.ts | AI Auto |
 | 2026-02-17 | Components | Modified: CodeCard.tsx | components/CodeCard.tsx | AI Auto |
 | 2026-02-17 | Other | Modified: tmp-update-codes.mjs | tmp-update-codes.mjs | AI Auto |
