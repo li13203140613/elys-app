@@ -75,6 +75,8 @@ export interface TranslationPack {
   timeoutDesc: string
   purchaseError: string
   createSessionError: string
+  faqTitle: string
+  faqItems: Array<{ q: string; a: string }>
 }
 
 export const TRANSLATIONS: Record<AppLanguage, TranslationPack> = {
@@ -114,6 +116,33 @@ export const TRANSLATIONS: Record<AppLanguage, TranslationPack> = {
     timeoutDesc: '支付验证超时，请联系支持。',
     purchaseError: '支付失败，请稍后重试',
     createSessionError: '创建支付会话失败',
+    faqTitle: '关于 Elys 邀请码的常见问题',
+    faqItems: [
+      {
+        q: '什么是 Elys 邀请码？',
+        a: 'Elys 邀请码是注册 Elys App 所需的专属激活凭证。Elys 采用邀请制注册机制，您需要持有有效的 Elys 邀请码才能完成 Elys 账号注册，开始体验 Elys 的全部功能。每个 Elys 邀请码仅限使用一次。',
+      },
+      {
+        q: 'Elys 是什么？Elys 能干什么？',
+        a: 'Elys 是一款新一代 AI 社交应用，利用先进的人工智能技术为用户提供智能社交匹配、AI 辅助对话等创新功能。通过 Elys，您可以更高效地发现志同道合的朋友，享受由 AI 驱动的全新社交体验。目前 Elys 仅对持有 Elys 邀请码的用户开放注册。',
+      },
+      {
+        q: '如何使用 Elys 邀请码完成注册？',
+        a: '购买 Elys 邀请码后，下载并打开 Elys App，在注册页面输入您获得的 Elys 邀请码即可完成激活。Elys 邀请码激活后将与您的 Elys 账号绑定，请在使用前妥善保管您的 Elys 邀请码。',
+      },
+      {
+        q: '购买 Elys 邀请码后多久能收到？',
+        a: '在本站购买 Elys 邀请码，支付成功后页面会立即显示完整的 Elys 邀请码，全程自动处理无需等待。建议您收到 Elys 邀请码后立即复制保存，避免页面关闭后丢失。',
+      },
+      {
+        q: 'Elys 邀请码支持退款吗？',
+        a: '由于 Elys 邀请码属于虚拟数字商品，支付完成后系统会立即揭示完整的 Elys 邀请码，因此已购买的 Elys 邀请码不支持退款。请您在购买 Elys 邀请码前确认需求。',
+      },
+      {
+        q: '为什么注册 Elys 需要邀请码？',
+        a: 'Elys 采用邀请码注册机制是为了保障 Elys 社区的用户质量和体验。通过 Elys 邀请码制度，Elys 团队能够有效控制用户增长节奏，确保每一位 Elys 用户都能获得高品质的 AI 社交体验。随着 Elys 平台发展，未来可能会逐步开放注册。',
+      },
+    ],
   },
   'zh-HK': {
     navTitle: 'Elys 邀請碼',
@@ -151,6 +180,33 @@ export const TRANSLATIONS: Record<AppLanguage, TranslationPack> = {
     timeoutDesc: '付款驗證逾時，請聯絡支援。',
     purchaseError: '付款失敗，請稍後重試',
     createSessionError: '建立付款會話失敗',
+    faqTitle: '關於 Elys 邀請碼的常見問題',
+    faqItems: [
+      {
+        q: '什麼是 Elys 邀請碼？',
+        a: 'Elys 邀請碼是註冊 Elys App 所需的專屬啟用憑證。Elys 採用邀請制註冊機制，您需要持有有效的 Elys 邀請碼才能完成 Elys 帳號註冊，開始體驗 Elys 的全部功能。每個 Elys 邀請碼僅限使用一次。',
+      },
+      {
+        q: 'Elys 是什麼？Elys 能做什麼？',
+        a: 'Elys 是一款新一代 AI 社交應用，利用先進的人工智能技術為用戶提供智能社交配對、AI 輔助對話等創新功能。透過 Elys，您可以更高效地發現志同道合的朋友，享受由 AI 驅動的全新社交體驗。目前 Elys 僅對持有 Elys 邀請碼的用戶開放註冊。',
+      },
+      {
+        q: '如何使用 Elys 邀請碼完成註冊？',
+        a: '購買 Elys 邀請碼後，下載並開啟 Elys App，在註冊頁面輸入您取得的 Elys 邀請碼即可完成啟用。Elys 邀請碼啟用後將與您的 Elys 帳號綁定，請在使用前妥善保管您的 Elys 邀請碼。',
+      },
+      {
+        q: '購買 Elys 邀請碼後多久能收到？',
+        a: '在本站購買 Elys 邀請碼，付款成功後頁面會立即顯示完整的 Elys 邀請碼，全程自動處理無需等待。建議您收到 Elys 邀請碼後立即複製保存，避免頁面關閉後遺失。',
+      },
+      {
+        q: 'Elys 邀請碼支持退款嗎？',
+        a: '由於 Elys 邀請碼屬於虛擬數位商品，付款完成後系統會立即揭示完整的 Elys 邀請碼，因此已購買的 Elys 邀請碼不支持退款。請您在購買 Elys 邀請碼前確認需求。',
+      },
+      {
+        q: '為什麼註冊 Elys 需要邀請碼？',
+        a: 'Elys 採用邀請碼註冊機制是為了保障 Elys 社區的用戶質量和體驗。透過 Elys 邀請碼制度，Elys 團隊能夠有效控制用戶增長節奏，確保每一位 Elys 用戶都能獲得高品質的 AI 社交體驗。隨著 Elys 平台發展，未來可能會逐步開放註冊。',
+      },
+    ],
   },
   ja: {
     navTitle: 'Elys 招待コード',
@@ -188,6 +244,33 @@ export const TRANSLATIONS: Record<AppLanguage, TranslationPack> = {
     timeoutDesc: '支払い確認がタイムアウトしました。サポートに連絡してください。',
     purchaseError: '支払いに失敗しました。再度お試しください',
     createSessionError: '決済セッションの作成に失敗しました',
+    faqTitle: 'Elys 招待コードに関するよくある質問',
+    faqItems: [
+      {
+        q: 'Elys 招待コードとは？',
+        a: 'Elys 招待コードは、Elys App に登録するために必要な専用アクティベーションコードです。Elys は招待制を採用しており、有効な Elys 招待コードがなければ Elys アカウントを作成できません。各 Elys 招待コードは1回のみ使用可能です。',
+      },
+      {
+        q: 'Elys とは？Elys で何ができる？',
+        a: 'Elys は次世代の AI ソーシャルアプリです。高度な AI 技術を活用し、スマートなマッチングや AI アシスタント付きチャットなどの革新的な機能を提供します。Elys を通じて、趣味の合う仲間を見つけ、AI が支援する新しいソーシャル体験を楽しめます。現在 Elys は招待コードをお持ちの方のみ登録可能です。',
+      },
+      {
+        q: 'Elys 招待コードの使い方は？',
+        a: 'Elys 招待コードを購入後、Elys App をダウンロードして開き、登録画面で取得した Elys 招待コードを入力するとアクティベーションが完了します。Elys 招待コードはアカウントに紐づけられますので、使用前に大切に保管してください。',
+      },
+      {
+        q: 'Elys 招待コードはいつ届く？',
+        a: '本サイトで Elys 招待コードをご購入いただくと、お支払い完了後すぐに完全な Elys 招待コードが画面に表示されます。届いた Elys 招待コードはすぐにコピーして保存することをおすすめします。',
+      },
+      {
+        q: 'Elys 招待コードは返金できる？',
+        a: 'Elys 招待コードはデジタル商品のため、お支払い完了後すぐに完全な Elys 招待コードが表示されます。そのため、購入済みの Elys 招待コードの返金には対応しておりません。ご購入前にご確認ください。',
+      },
+      {
+        q: 'なぜ Elys は招待コードが必要？',
+        a: 'Elys が招待コード制を採用しているのは、Elys コミュニティのユーザー品質と体験を守るためです。Elys 招待コード制度により、Elys チームはユーザーの成長ペースを管理し、すべての Elys ユーザーに高品質な AI ソーシャル体験を提供できます。',
+      },
+    ],
   },
   en: {
     navTitle: 'Elys Invitation Code',
@@ -225,6 +308,33 @@ export const TRANSLATIONS: Record<AppLanguage, TranslationPack> = {
     timeoutDesc: 'Payment verification timed out. Please contact support.',
     purchaseError: 'Payment failed. Please try again',
     createSessionError: 'Failed to create payment session',
+    faqTitle: 'Frequently Asked Questions About Elys Invitation Codes',
+    faqItems: [
+      {
+        q: 'What is an Elys invitation code?',
+        a: 'An Elys invitation code is a unique activation credential required to register on the Elys App. Elys uses an invite-only registration system, so you need a valid Elys invitation code to create your Elys account and access all of Elys\'s features. Each Elys invitation code can only be used once.',
+      },
+      {
+        q: 'What is Elys? What can Elys do?',
+        a: 'Elys is a next-generation AI social app that leverages advanced artificial intelligence to offer smart social matching, AI-assisted conversations, and other innovative features. With Elys, you can efficiently discover like-minded friends and enjoy a brand-new AI-powered social experience. Currently, Elys is only open to users who hold a valid Elys invitation code.',
+      },
+      {
+        q: 'How do I use an Elys invitation code to sign up?',
+        a: 'After purchasing an Elys invitation code, download and open the Elys App, then enter your Elys invitation code on the registration page to complete activation. Once used, the Elys invitation code will be bound to your Elys account. Please keep your Elys invitation code safe before use.',
+      },
+      {
+        q: 'How soon will I receive my Elys invitation code after purchase?',
+        a: 'When you purchase an Elys invitation code on this site, the full Elys invitation code is displayed on screen instantly after payment — no waiting required. We recommend copying and saving your Elys invitation code immediately to avoid losing it if the page is closed.',
+      },
+      {
+        q: 'Can I get a refund for an Elys invitation code?',
+        a: 'Since Elys invitation codes are digital products, the full Elys invitation code is revealed immediately upon payment. Therefore, purchased Elys invitation codes are non-refundable. Please confirm your needs before purchasing an Elys invitation code.',
+      },
+      {
+        q: 'Why does Elys require an invitation code to register?',
+        a: 'Elys uses an invitation code system to maintain the quality of the Elys community and user experience. Through the Elys invitation code mechanism, the Elys team can effectively manage user growth and ensure every Elys user enjoys a premium AI social experience. As the Elys platform grows, open registration may become available in the future.',
+      },
+    ],
   },
 }
 

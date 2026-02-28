@@ -71,6 +71,7 @@ pnpm start    # 生产模式
 
 | Date | Module | Changes | Scope | Note |
 |------|----------|----------|----------|------|
+| 2026-02-28 | Library | Modified: i18n.ts | lib/i18n.ts | AI Auto |
 | 2026-02-17 | Components | Modified: CodeCard.tsx | components/CodeCard.tsx | AI Auto |
 | 2026-02-17 | Other | Modified: tmp-update-codes.mjs | tmp-update-codes.mjs | AI Auto |
 | 2026-02-15 | Other | Modified: robots.ts | app/robots.ts | AI Auto |
