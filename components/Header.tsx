@@ -20,13 +20,15 @@ export function Header() {
               Elys
             </span>
           </Link>
-          <span className="text-sm text-zinc-400 hidden md:inline">{t.navTitle}</span>
           <nav className="hidden sm:flex items-center gap-3 ml-4 border-l border-zinc-800 pl-4">
+            <Link href="/" className="text-sm text-zinc-400 hover:text-purple-300 transition-colors">
+              {language === 'en' ? 'Buy Elys Invite Code' : '购买 Elys 邀请码'}
+            </Link>
             <Link href="/elys-ai" className="text-sm text-zinc-400 hover:text-purple-300 transition-colors">
               {language === 'en' ? 'About Elys' : '关于 Elys'}
             </Link>
             <Link href="/download" className="text-sm text-zinc-400 hover:text-purple-300 transition-colors">
-              {language === 'en' ? 'Download' : '下载'}
+              {language === 'en' ? 'Download' : 'Elys 下载'}
             </Link>
           </nav>
         </div>

@@ -22,7 +22,7 @@ const jsonLd = {
   name: 'Elys',
   applicationCategory: 'SocialNetworkingApplication',
   operatingSystem: 'iOS 16.0+',
-  downloadUrl: 'https://apps.apple.com/app/elys-ai/id6741419484',
+  downloadUrl: 'https://apps.apple.com/cn/app/elys/id6754834695',
   description: '下载 Elys App，体验新一代 AI 社交应用。',
   offers: {
     '@type': 'Offer',
@@ -81,7 +81,7 @@ export default function DownloadPage() {
               点击下方按钮直接前往 App Store 下载 Elys App，或在 App Store 中搜索"Elys"。
             </p>
             <a
-              href="https://apps.apple.com/app/elys-ai/id6741419484"
+              href="https://apps.apple.com/cn/app/elys/id6754834695"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-purple-600 to-blue-600 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-purple-500/25 hover:shadow-purple-500/40 transition-all hover:scale-105"

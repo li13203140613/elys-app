@@ -33,7 +33,7 @@ const jsonLd = {
       position: 2,
       name: '下载 Elys App',
       text: '前往 App Store 搜索"Elys"下载安装 Elys App。',
-      url: 'https://apps.apple.com/app/elys-ai/id6741419484',
+      url: 'https://apps.apple.com/cn/app/elys/id6754834695',
     },
     {
       '@type': 'HowToStep',
