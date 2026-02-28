@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import Script from 'next/script'
 import { AppSettingsProvider } from '@/components/AppSettingsProvider'
 import { Toaster } from '@/components/ui/sonner'
 import './globals.css'
@@ -52,6 +53,20 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="zh-CN">
+      <head>
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-40S9YFKDHN"
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-40S9YFKDHN');
+          `}
+        </Script>
+      </head>
       <body className="min-h-screen bg-[#0a0a0f] antialiased">
         <AppSettingsProvider>
           {children}
